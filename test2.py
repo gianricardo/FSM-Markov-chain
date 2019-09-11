@@ -1,3 +1,8 @@
+##############################
+##Gerson de Oliveira Barbosa##
+##  Doutorando - CAP/INPE   ##
+##  email:giirso@gmail.com  ##
+##############################
 import numpy as np
 import random as rm
 
@@ -5,7 +10,7 @@ import random as rm
 states = ["Start","Withdraw","Check","Deposit","End"]
 
 '''Arc's names'''
-transitionName = [["SS","SW","SC","SD","SE"],["WS","WW","WC","WD","WE"],["CS","CW","CC","CD","CE"],["DS","DW","DC","DD","DE"],["ES","EW","EC","ED","EE"]]
+arcsName = [["SS","SW","SC","SD","SE"],["WS","WW","WC","WD","WE"],["CS","CW","CC","CD","CE"],["DS","DW","DC","DD","DE"],["ES","EW","EC","ED","EE"]]
 
 '''Probabilities matrix (transition matrix).'''
 transitionMatrix = [[0,0.2,0.3,0.5,0.0],[0.2,0.0,0.4,0.0,0.4],[0.0,0.6,0.0,0.2,0.2],[0.5,0.0,0.1,0.0,0.4],[0.6,0.0,0.4,0.0,0.0]]
@@ -28,170 +33,177 @@ def probLimit(matrix):
 		i = i+1	
 	return C
 
-'''Showing probability limit of the transition matrix.'''
-print probLimit(transitionMatrix)
-
 '''Main program.'''
 def process(initial):
   
-    activityToday = initial
+    arcNow = initial
     transitionWay = []
-    activityList = [activityToday]
+    arcLista = [arcNow]
     gambir = 1
     prob = 1
 
     while (True):
-        if activityToday == "Start":
-            change = np.random.choice(transitionName[0],replace=True,p=transitionMatrix[0])
-            transitionWay.append(change)
-            if change == "SS":
+        if arcNow == "Start":
+            arc = np.random.choice(arcsName[0],replace=True,p=transitionMatrix[0])
+            transitionWay.append(arc)
+            if arc == "SS":
                 prob = prob * 0.0
-                activityToday = "Start"
-                activityList.append("Start")
-            elif change == "SW":
+                arcNow = "Start"
+                arcLista.append("Start")
+            elif arc == "SW":
                 prob = prob * 0.2
-                activityToday = "Withdraw"
-                activityList.append("Withdraw")
+                arcNow = "Withdraw"
+                arcLista.append("Withdraw")
 
-            elif change == "SC":
+            elif arc == "SC":
                 prob = prob * 0.3
-                activityToday = "Check"
-                activityList.append("Check")                
-            elif change == "SD":
+                arcNow = "Check"
+                arcLista.append("Check")                
+            elif arc == "SD":
                 prob = prob * 0.5
-                activityToday = "Deposit"
-                activityList.append("Deposit")
+                arcNow = "Deposit"
+                arcLista.append("Deposit")
             else:
                 prob = prob * 0.0
-                activityToday = "End"
-                activityList.append("End")
+                arcNow = "End"
+                arcLista.append("End")
 
-        elif activityToday == "Withdraw":
-            change = np.random.choice(transitionName[1],replace=True,p=transitionMatrix[1])
-            transitionWay.append(change)
-            if change == "WS":
+        elif arcNow == "Withdraw":
+            arc = np.random.choice(arcsName[1],replace=True,p=transitionMatrix[1])
+            transitionWay.append(arc)
+            if arc == "WS":
                 prob = prob * 0.2
-                activityToday = "Start"		
-                activityList.append("Start")
-            elif change == "WW":
+                arcNow = "Start"		
+                arcLista.append("Start")
+            elif arc == "WW":
                 prob = prob * 0.0
-                activityToday = "Withdraw"
-                activityList.append("Withdraw")
+                arcNow = "Withdraw"
+                arcLista.append("Withdraw")
 
-            elif change == "WC":
+            elif arc == "WC":
                 prob = prob * 0.4
-                activityToday = "Check"
-                activityList.append("Check")                
-            elif change == "WD":
+                arcNow = "Check"
+                arcLista.append("Check")                
+            elif arc == "WD":
                 prob = prob * 0.0
-                activityToday = "Deposit"
-                activityList.append("Deposit")
+                arcNow = "Deposit"
+                arcLista.append("Deposit")
             else:
                 prob = prob * 0.4
-                activityToday = "End"
-                activityList.append("End")
+                arcNow = "End"
+                arcLista.append("End")
 
-        elif activityToday == "Check":
-            change = np.random.choice(transitionName[2],replace=True,p=transitionMatrix[2])
-            transitionWay.append(change)
-            if change == "CS":
+        elif arcNow == "Check":
+            arc = np.random.choice(arcsName[2],replace=True,p=transitionMatrix[2])
+            transitionWay.append(arc)
+            if arc == "CS":
                 prob = prob * 0.0
-                activityToday = "Start"
-                activityList.append("Start")
-            elif change == "CW":
+                arcNow = "Start"
+                arcLista.append("Start")
+            elif arc == "CW":
                 prob = prob * 0.6
-                activityToday = "Withdraw"
-                activityList.append("Withdraw")
+                arcNow = "Withdraw"
+                arcLista.append("Withdraw")
 
-            elif change == "CC":
+            elif arc == "CC":
                 prob = prob * 0.0
-                activityToday = "Check"
-                activityList.append("Check")                
-            elif change == "CD":
+                arcNow = "Check"
+                arcLista.append("Check")                
+            elif arc == "CD":
                 prob = prob * 0.2
-                activityToday = "Deposit"
-                activityList.append("Deposit")
+                arcNow = "Deposit"
+                arcLista.append("Deposit")
             else:
                 prob = prob * 0.2
-                activityToday = "End"
-                activityList.append("End")
+                arcNow = "End"
+                arcLista.append("End")
 
-        elif activityToday == "Deposit":
-            change = np.random.choice(transitionName[3],replace=True,p=transitionMatrix[3])
-            transitionWay.append(change)
-            if change == "DS":
+        elif arcNow == "Deposit":
+            arc = np.random.choice(arcsName[3],replace=True,p=transitionMatrix[3])
+            transitionWay.append(arc)
+            if arc == "DS":
                 prob = prob * 0.5
-                activityToday = "Start"
-                activityList.append("Start")
-            elif change == "DW":
+                arcNow = "Start"
+                arcLista.append("Start")
+            elif arc == "DW":
                 prob = prob * 0.0
-                activityToday = "Withdraw"
-                activityList.append("Withdraw")
+                arcNow = "Withdraw"
+                arcLista.append("Withdraw")
 
-            elif change == "DC":
+            elif arc == "DC":
                 prob = prob * 0.1
-                activityToday = "Check"
-                activityList.append("Check")                
-            elif change == "DD":
+                arcNow = "Check"
+                arcLista.append("Check")                
+            elif arc == "DD":
                 prob = prob * 0.0
-                activityToday = "Deposit"
-                activityList.append("Deposit")
+                arcNow = "Deposit"
+                arcLista.append("Deposit")
             else:
                 prob = prob * 0.4
-                activityToday = "End"
-                activityList.append("End")
+                arcNow = "End"
+                arcLista.append("End")
         
         else:
-            change = np.random.choice(transitionName[4],replace=True,p=transitionMatrix[4])
-            transitionWay.append(change)
-            if change == "ES":
+            arc = np.random.choice(arcsName[4],replace=True,p=transitionMatrix[4])
+            transitionWay.append(arc)
+            if arc == "ES":
                 prob = prob * 0.6
-                activityToday = "Start"
-                activityList.append("Start")
-            elif change == "EW":
+                arcNow = "Start"
+                arcLista.append("Start")
+            elif arc == "EW":
                 prob = prob * 0.0
-                activityToday = "Withdraw"
-                activityList.append("Withdraw")
+                arcNow = "Withdraw"
+                arcLista.append("Withdraw")
 
-            elif change == "EC":
+            elif arc == "EC":
                 prob = prob * 0.4
-                activityToday = "Check"
-                activityList.append("Check")                
-            elif change == "ED":
+                arcNow = "Check"
+                arcLista.append("Check")                
+            elif arc == "ED":
                 prob = prob * 0.0
-                activityToday = "Deposit"
-                activityList.append("Deposit")
+                arcNow = "Deposit"
+                arcLista.append("Deposit")
             else:
                 prob = prob * 0.0
-                activityToday = "End"
-                activityList.append("End")
-        if activityToday == "Start":
+                arcNow = "End"
+                arcLista.append("End")
+        if arcNow == "Start":
             break
-    return [transitionWay,prob]
+    return [transitionWay,prob],[arcLista,prob]
 
-List_activity = []
+List_transitions = []
+List_states = []
 stop = 0.0
 count = 0.0
 
 i = 0
-while stop<0.95:
-	sequence = process("Start")
-	if sequence in List_activity:
-		count = count + 1
-	else:
-		List_activity.append(sequence) 
-		stop = stop + sequence[1]
-percent = stop*100
-print percent,"% dos caminhos encontrados"
-List_activity.sort(key=lambda x:x[1],reverse=True)
 
-outF = open("myOutFile.txt", "w")
-for line in List_activity:
+'''Writing the test cases.'''
+while stop<0.95:
+	sequence_arc,sequence_state = process("Start")
+	if sequence_arc in List_transitions:
+		pass
+	else:
+		List_transitions.append(sequence_arc)
+		List_states.append(sequence_state) 
+		stop = stop + sequence_arc[1]
+
+percent = stop*100
+
+print percent,"% of test cases found."
+List_transitions.sort(key=lambda x:x[1],reverse=True)
+List_states.sort(key=lambda x:x[1],reverse=True)
+
+outF = open("arcs.txt", "w")
+print >>outF, "Test cases showing the arcs traveled with their respective probabilities:\n"
+for line in List_transitions:
   print >>outF, line
 outF.close()
 
-
-
-
+outFF = open("states.txt", "w")
+print >>outFF, "Test cases showing the states traveled with their respective probabilities:\n"
+for line in List_states:
+  print >>outFF, line
+outF.close()
 
 
