@@ -1,22 +1,20 @@
 import numpy as np
 import random as rm
 
-''' Declarando os estados (Exemplo do artigo "Model based Testing for Software Systems: An
-Application of Markov Modulated Markov Process"''' 
-
+'''Declaring possible states:'''
 states = ["Start","Withdraw","Check","Deposit","End"]
 
-# Possible sequences of events
+'''Arc's names'''
 transitionName = [["SS","SW","SC","SD","SE"],["WS","WW","WC","WD","WE"],["CS","CW","CC","CD","CE"],["DS","DW","DC","DD","DE"],["ES","EW","EC","ED","EE"]]
 
-# Probabilities matrix (transition matrix)
+'''Probabilities matrix (transition matrix).'''
 transitionMatrix = [[0,0.2,0.3,0.5,0.0],[0.2,0.0,0.4,0.0,0.4],[0.0,0.6,0.0,0.2,0.2],[0.5,0.0,0.1,0.0,0.4],[0.6,0.0,0.4,0.0,0.0]]
 
+'''Checking if the transition matrix is correct, that is, the sum of the lines is equal to 1.'''
 if sum(transitionMatrix[0])+sum(transitionMatrix[1])+sum(transitionMatrix[2])+sum(transitionMatrix[3])+sum(transitionMatrix[4]) != 5:
-    print("Distribuicao de probabilidade incorreta!!")
+    print("Incorrect distribution!!")
 
-'''Calculando as probabilidades limites'''
-
+'''Function that calculates the limit probability of the transition matrix.'''
 def probLimit(matrix):
 	i = 0
         epsilon  = 1e-8
@@ -30,8 +28,10 @@ def probLimit(matrix):
 		i = i+1	
 	return C
 
+'''Showing probability limit of the transition matrix.'''
 print probLimit(transitionMatrix)
 
+'''Main program.'''
 def process(initial):
   
     activityToday = initial
