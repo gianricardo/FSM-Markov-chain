@@ -19,12 +19,12 @@ In this version of the project, entries are made in the main program itself. In 
 ```python
 states = ["Start","Withdraw","Check","Deposit","End"]
 ```
--A transition matrix for the inserted states;
+- A transition matrix for the inserted states;
 >Example:
 ```python
 transitionMatrix = [[0,0.2,0.3,0.5,0.0],[0.2,0.0,0.4,0.0,0.4],[0.0,0.6,0.0,0.2,0.2],[0.5,0.0,0.1,0.0,0.4],[0.6,0.0,0.4,0.0,0.0]]
 ```
--And an array containing the names of the transitions.
+- And an array containing the names of the transitions.
 >Example:
 ```python
 arcsName = [["SS","SW","SC","SD","SE"],["WS","WW","WC","WD","WE"],["CS","CW","CC","CD","CE"],["DS","DW","DC","DD","DE"],["ES","EW","EC","ED","EE"]]
