@@ -1,0 +1,6 @@
+states_path: ./states_name.txt
+initial_state: Start
+final_state:
+  - End
+test_case_percentage: 0.95
+transition_matrix_path: ./transition_matrix.txt
