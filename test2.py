@@ -1,209 +1,130 @@
-##############################
-##Gerson de Oliveira Barbosa##
-##  Doutorando - CAP/INPE   ##
-##  email:giirso@gmail.com  ##
-##############################
 import numpy as np
 import random as rm
+import yaml
 
-'''Declaring possible states:'''
-states = ["Start","Withdraw","Check","Deposit","End"]
+import argparse
+PARSER = argparse.ArgumentParser(description="Prioritization of test cases - Markov Chain")
+PARSER.add_argument("train_configs",
+                    help="Path to a YAML file that configures the prioritization code")
 
-'''Arc's names'''
-arcsName = [["SS","SW","SC","SD","SE"],["WS","WW","WC","WD","WE"],["CS","CW","CC","CD","CE"],["DS","DW","DC","DD","DE"],["ES","EW","EC","ED","EE"]]
+args = PARSER.parse_args()
 
-'''Probabilities matrix (transition matrix).'''
-transitionMatrix = [[0,0.2,0.3,0.5,0.0],[0.2,0.0,0.4,0.0,0.4],[0.0,0.6,0.0,0.2,0.2],[0.5,0.0,0.1,0.0,0.4],[0.6,0.0,0.4,0.0,0.0]]
+def find_element(l, elem):
+    for row, i in enumerate(l):
+        try:
+            column = i.index(elem)
+        except ValueError:
+            continue
+        return row, column
+    return -1
 
-'''Checking if the transition matrix is correct, that is, the sum of the lines is equal to 1.'''
-if sum(transitionMatrix[0])+sum(transitionMatrix[1])+sum(transitionMatrix[2])+sum(transitionMatrix[3])+sum(transitionMatrix[4]) != 5:
-    print("Incorrect distribution!!")
+# Function that calculates the limit probability of the transition matrix.
+def prob_limit(matrix):
+    i = 0
+    epsilon  = 1e-8
+    matrixAux = matrix
+    while(True):
+        C = np.dot(matrix,matrixAux)
+        D = matrixAux[0][0] - C[0][0]
+        if (abs(D)<epsilon):
+            break
+        matrixAux = C
+        i = i+1
+    return C
 
-'''Function that calculates the limit probability of the transition matrix.'''
-def probLimit(matrix):
-	i = 0
-        epsilon  = 1e-8
-        matrixAux = matrix
-	while(True):
-		C = np.dot(matrix,matrixAux)
-		D = matrixAux[0][0] - C[0][0]
-		if (abs(D)<epsilon):		
-			break		
-		matrixAux = C	
-		i = i+1	
-	return C
-
-'''Main program.'''
-def process(initial):
-  
-    arcNow = initial
-    transitionWay = []
-    arcLista = [arcNow]
-    gambir = 1
+def randon_walk(initial_state, matrix, arcs_name, states_list):
+    arc_now = initial_state
+    transition_way = []
+    arc_list = [arc_now]
     prob = 1
 
     while (True):
-        if arcNow == "Start":
-            arc = np.random.choice(arcsName[0],replace=True,p=transitionMatrix[0])
-            transitionWay.append(arc)
-            if arc == "SS":
-                prob = prob * 0.0
-                arcNow = "Start"
-                arcLista.append("Start")
-            elif arc == "SW":
-                prob = prob * 0.2
-                arcNow = "Withdraw"
-                arcLista.append("Withdraw")
+        # Find the prob
+        present_state_idx = states_list.index(arc_now)
+        arc = np.random.choice(arcs_name[present_state_idx],
+                               replace=True,
+                               p= matrix[present_state_idx])
+        transition_way.append(arc)
 
-            elif arc == "SC":
-                prob = prob * 0.3
-                arcNow = "Check"
-                arcLista.append("Check")                
-            elif arc == "SD":
-                prob = prob * 0.5
-                arcNow = "Deposit"
-                arcLista.append("Deposit")
-            else:
-                prob = prob * 0.0
-                arcNow = "End"
-                arcLista.append("End")
+        # Find the index of arc
+        i, j = find_element(arcs_name, arc)
+        prob = prob * matrix[i][j]
+        arc_now = arc.split("_")[1]
+        arc_list.append(states[i])
 
-        elif arcNow == "Withdraw":
-            arc = np.random.choice(arcsName[1],replace=True,p=transitionMatrix[1])
-            transitionWay.append(arc)
-            if arc == "WS":
-                prob = prob * 0.2
-                arcNow = "Start"		
-                arcLista.append("Start")
-            elif arc == "WW":
-                prob = prob * 0.0
-                arcNow = "Withdraw"
-                arcLista.append("Withdraw")
-
-            elif arc == "WC":
-                prob = prob * 0.4
-                arcNow = "Check"
-                arcLista.append("Check")                
-            elif arc == "WD":
-                prob = prob * 0.0
-                arcNow = "Deposit"
-                arcLista.append("Deposit")
-            else:
-                prob = prob * 0.4
-                arcNow = "End"
-                arcLista.append("End")
-
-        elif arcNow == "Check":
-            arc = np.random.choice(arcsName[2],replace=True,p=transitionMatrix[2])
-            transitionWay.append(arc)
-            if arc == "CS":
-                prob = prob * 0.0
-                arcNow = "Start"
-                arcLista.append("Start")
-            elif arc == "CW":
-                prob = prob * 0.6
-                arcNow = "Withdraw"
-                arcLista.append("Withdraw")
-
-            elif arc == "CC":
-                prob = prob * 0.0
-                arcNow = "Check"
-                arcLista.append("Check")                
-            elif arc == "CD":
-                prob = prob * 0.2
-                arcNow = "Deposit"
-                arcLista.append("Deposit")
-            else:
-                prob = prob * 0.2
-                arcNow = "End"
-                arcLista.append("End")
-
-        elif arcNow == "Deposit":
-            arc = np.random.choice(arcsName[3],replace=True,p=transitionMatrix[3])
-            transitionWay.append(arc)
-            if arc == "DS":
-                prob = prob * 0.5
-                arcNow = "Start"
-                arcLista.append("Start")
-            elif arc == "DW":
-                prob = prob * 0.0
-                arcNow = "Withdraw"
-                arcLista.append("Withdraw")
-
-            elif arc == "DC":
-                prob = prob * 0.1
-                arcNow = "Check"
-                arcLista.append("Check")                
-            elif arc == "DD":
-                prob = prob * 0.0
-                arcNow = "Deposit"
-                arcLista.append("Deposit")
-            else:
-                prob = prob * 0.4
-                arcNow = "End"
-                arcLista.append("End")
-        
-        else:
-            arc = np.random.choice(arcsName[4],replace=True,p=transitionMatrix[4])
-            transitionWay.append(arc)
-            if arc == "ES":
-                prob = prob * 0.6
-                arcNow = "Start"
-                arcLista.append("Start")
-            elif arc == "EW":
-                prob = prob * 0.0
-                arcNow = "Withdraw"
-                arcLista.append("Withdraw")
-
-            elif arc == "EC":
-                prob = prob * 0.4
-                arcNow = "Check"
-                arcLista.append("Check")                
-            elif arc == "ED":
-                prob = prob * 0.0
-                arcNow = "Deposit"
-                arcLista.append("Deposit")
-            else:
-                prob = prob * 0.0
-                arcNow = "End"
-                arcLista.append("End")
-        if arcNow == "Start":
+        if arc_now in final_state:
             break
-    return [transitionWay,prob],[arcLista,prob]
-
-List_transitions = []
-List_states = []
-stop = 0.0
-count = 0.0
-
-i = 0
-
-'''Writing the test cases.'''
-while stop<0.95:
-	sequence_arc,sequence_state = process("Start")
-	if sequence_arc in List_transitions:
-		pass
-	else:
-		List_transitions.append(sequence_arc)
-		List_states.append(sequence_state) 
-		stop = stop + sequence_arc[1]
-
-percent = stop*100
-
-print percent,"% of test cases found."
-List_transitions.sort(key=lambda x:x[1],reverse=True)
-List_states.sort(key=lambda x:x[1],reverse=True)
-
-outF = open("arcs.txt", "w")
-print >>outF, "Test cases showing the arcs traveled with their respective probabilities:\n"
-for line in List_transitions:
-  print >>outF, line
-outF.close()
-
-outFF = open("states.txt", "w")
-print >>outFF, "Test cases showing the states traveled with their respective probabilities:\n"
-for line in List_states:
-  print >>outFF, line
-outF.close()
+    return [transition_way,prob],[arc_list,prob]
 
 
+if __name__ == "__main__":
+
+    # Parses the experiment settings
+    with open(args.train_configs) as yaml_file:
+        code_configs = yaml.load(yaml_file, Loader=yaml.FullLoader)
+    # Parses the states list
+    with open(code_configs["states_path"]) as f:
+        for line in f:
+            states = [elt.strip() for elt in line.split(',')]
+    # Parses the transition matrix
+    transition_matrix = np.loadtxt(code_configs["transition_matrix_path"], delimiter=",")
+    # Parsing the initial and final state
+    initial_state, final_state = code_configs["initial_state"], code_configs["final_state"]
+    # Parsing the stop criteria percentage
+    stop_criteria = code_configs["test_case_percentage"]
+
+    # Creating arcs name matrix
+    N = len(states)
+    rows, cols = (N, N)
+    arcs_name = []
+    for origin_state in states:
+        aux_list = []
+        for destiny_state in states:
+            aux_list.append(origin_state+'_'+destiny_state)
+            if len(aux_list) == N:
+                arcs_name.append(aux_list)
+                break
+
+    # Checking if the transition matrix is correct, that is, the sum of the lines is equal to 1.
+    for i in range(len(transition_matrix)):
+        sum = 0
+        for j in range(len(transition_matrix)):
+            sum += transition_matrix[i][j]
+        if(sum != 1):
+            print("Incorrect distribution!!")
+            break
+
+    list_transitions = []
+    list_states = []
+    stop = 0.0
+    count = 0.0
+
+    i = 0
+
+    # Main loop
+    while stop<stop_criteria:
+        sequence_arc,sequence_state = randon_walk(initial_state, transition_matrix, arcs_name, states)
+        if sequence_arc in list_transitions:
+            pass
+        else:
+            list_transitions.append(sequence_arc)
+            list_states.append(sequence_state)
+            stop += sequence_arc[1]
+
+    percent = stop*100
+
+    print(percent,"\% of test cases found.")
+    list_transitions.sort(key=lambda x:x[1],reverse=True)
+    list_states.sort(key=lambda x:x[1],reverse=True)
+
+    out_arcs = open("arcs.txt", "w")
+    out_arcs.write("Test cases showing the arcs traveled with their respective probabilities:\n")
+    for line in list_transitions:
+      out_arcs.write(str(line)+"\n")
+    out_arcs.close()
+
+    out_states = open("states.txt", "w")
+    out_states.write("Test cases showing the states traveled with their respective probabilities:\n")
+    for line in list_states:
+        out_states.write(str(line)+"\n")
+    out_states.close()
