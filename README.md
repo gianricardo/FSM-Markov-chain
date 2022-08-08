@@ -3,7 +3,7 @@ This project aims from a FSM (Finite State Machine), representing a Markov chain
 
 ## Main Program
 
-The main program is test2.py and is written in python 2. The imported packages are:
+The main program is test2.py and is written in python 3. The imported packages are:
 - numpy
 - random
 
@@ -12,24 +12,22 @@ In the main program, in addition to the functions, we inserted a test case. This
 ![alt text](https://github.com/giirso/FSM-Markov-chain/blob/master/FSM-example.jpg)
 
 ## Input 
-In this version of the project, entries are made in the main program itself. In a next step, we will create an input file. The program requires 3 entries.
- 
- - A list containing the states;
->Example:
-```python
-states = ["Start","Withdraw","Check","Deposit","End"]
-```
-- A transition matrix for the inserted states;
->Example:
-```python
-transitionMatrix = [[0,0.2,0.3,0.5,0.0],[0.2,0.0,0.4,0.0,0.4],[0.0,0.6,0.0,0.2,0.2],[0.5,0.0,0.1,0.0,0.4],[0.6,0.0,0.4,0.0,0.0]]
-```
-- And an array containing the names of the transitions.
->Example:
-```python
-arcsName = [["SS","SW","SC","SD","SE"],["WS","WW","WC","WD","WE"],["CS","CW","CC","CD","CE"],["DS","DW","DC","DD","DE"],["ES","EW","EC","ED","EE"]]
-```
+In this version, the setup of test case prioritization is done in the configuration file called input.yaml. Where is past:
+
+- The path of the transition matrix;
+- The file path with the states;
+- The final node;
+- The final node;
+- Stop criterion.
+
+There is an example of each of these external files in the repository to make it easier for you to configure your own. 
 The above examples also refer to the figure cited.
+
+## Run
+
+To run the program, just type in the terminal:
+
+python3 test2.py input.yalm
 
 ## Output
 
