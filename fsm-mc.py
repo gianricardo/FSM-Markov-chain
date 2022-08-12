@@ -1,6 +1,8 @@
 import numpy as np
 import random as rm
 import yaml
+import progressbar
+
 
 import argparse
 PARSER = argparse.ArgumentParser(description="Prioritization of test cases - Markov Chain")
@@ -50,7 +52,7 @@ def randon_walk(initial_state, matrix, arcs_name, states_list):
         i, j = find_element(arcs_name, arc)
         prob = prob * matrix[i][j]
         arc_now = arc.split("_")[1]
-        arc_list.append(states[i])
+        arc_list.append(arc_now)
 
         if arc_now in final_state:
             break
@@ -58,10 +60,17 @@ def randon_walk(initial_state, matrix, arcs_name, states_list):
 
 
 if __name__ == "__main__":
-
+    yaml_name = ''
+    widgets = [' [',
+         progressbar.Timer(format= 'elapsed time: %(elapsed)s'),
+         '] ', progressbar.FormatLabel('%(value)f'), ' ',
+           progressbar.Bar('*'),' (',
+           progressbar.AdaptiveETA(), ') ',
+          ]
     # Parses the experiment settings
     with open(args.train_configs) as yaml_file:
         code_configs = yaml.load(yaml_file, Loader=yaml.FullLoader)
+        yaml_name = yaml_file.name
     # Parses the states list
     with open(code_configs["states_path"]) as f:
         for line in f:
@@ -72,6 +81,7 @@ if __name__ == "__main__":
     initial_state, final_state = code_configs["initial_state"], code_configs["final_state"]
     # Parsing the stop criteria percentage
     stop_criteria = code_configs["test_case_percentage"]
+    bar = progressbar.ProgressBar(max_value=stop_criteria*1.05, widgets=widgets).start()
 
     # Creating arcs name matrix
     N = len(states)
@@ -98,6 +108,7 @@ if __name__ == "__main__":
     list_states = []
     stop = 0.0
     count = 0.0
+    last_probability = 0.0
 
     i = 0
 
@@ -110,20 +121,25 @@ if __name__ == "__main__":
             list_transitions.append(sequence_arc)
             list_states.append(sequence_state)
             stop += sequence_arc[1]
+        # print(f"{(stop*100):.3f}% of test cases found.")
+        if sequence_arc[1] < 1.e-25:
+            last_probability = sequence_arc[1]
+            break
+        bar.update(stop)
 
     percent = stop*100
-
-    print(percent,"\% of test cases found.")
+    bar.finish()
+    print(f"\n{percent:.3f}% of test cases found.\nLast probability: {last_probability:.35f}")
     list_transitions.sort(key=lambda x:x[1],reverse=True)
     list_states.sort(key=lambda x:x[1],reverse=True)
 
-    out_arcs = open("arcs.txt", "w")
+    out_arcs = open(f"{yaml_name.split('.')[0]}arcs.txt", "w")
     out_arcs.write("Test cases showing the arcs traveled with their respective probabilities:\n")
     for line in list_transitions:
       out_arcs.write(str(line)+"\n")
     out_arcs.close()
 
-    out_states = open("states.txt", "w")
+    out_states = open(f"{yaml_name.split('.')[0]}states.txt", "w")
     out_states.write("Test cases showing the states traveled with their respective probabilities:\n")
     for line in list_states:
         out_states.write(str(line)+"\n")
